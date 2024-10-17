@@ -34,7 +34,6 @@ type BeaconState struct {
 	PreviousEpochReserve common.Number            `json:"previous_epoch_reserve" yaml:"previous_epoch_reserve"`
 	CurrentEpochReserve  common.Number            `json:"current_epoch_reserve" yaml:"current_epoch_reserve"`
 	RandaoMixes          phase0.RandaoMixes       `json:"randao_mixes" yaml:"randao_mixes"`
-	Slashings            phase0.SlashingsHistory  `json:"slashings" yaml:"slashings"`
 	// Participation
 	PreviousEpochParticipation altair.ParticipationRegistry `json:"previous_epoch_participation" yaml:"previous_epoch_participation"`
 	CurrentEpochParticipation  altair.ParticipationRegistry `json:"current_epoch_participation" yaml:"current_epoch_participation"`
@@ -65,7 +64,7 @@ func (v *BeaconState) Deserialize(spec *common.Spec, dr *codec.DecodingReader) e
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), spec.Wrap(&v.HistoricalRoots), &v.RewardAdjustmentFactor,
 		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.PreviousEpochReserve, &v.CurrentEpochReserve,
-		spec.Wrap(&v.RandaoMixes), spec.Wrap(&v.Slashings),
+		spec.Wrap(&v.RandaoMixes),
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
 		&v.JustificationBits,
 		&v.PreviousJustifiedCheckpoint, &v.CurrentJustifiedCheckpoint,
@@ -85,7 +84,7 @@ func (v *BeaconState) Serialize(spec *common.Spec, w *codec.EncodingWriter) erro
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), spec.Wrap(&v.HistoricalRoots), &v.RewardAdjustmentFactor,
 		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.PreviousEpochReserve, &v.CurrentEpochReserve,
-		spec.Wrap(&v.RandaoMixes), spec.Wrap(&v.Slashings),
+		spec.Wrap(&v.RandaoMixes),
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
 		&v.JustificationBits,
 		&v.PreviousJustifiedCheckpoint, &v.CurrentJustifiedCheckpoint,
@@ -105,7 +104,7 @@ func (v *BeaconState) ByteLength(spec *common.Spec) uint64 {
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), spec.Wrap(&v.HistoricalRoots), &v.RewardAdjustmentFactor,
 		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.PreviousEpochReserve, &v.CurrentEpochReserve,
-		spec.Wrap(&v.RandaoMixes), spec.Wrap(&v.Slashings),
+		spec.Wrap(&v.RandaoMixes),
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
 		&v.JustificationBits,
 		&v.PreviousJustifiedCheckpoint, &v.CurrentJustifiedCheckpoint,
@@ -129,7 +128,7 @@ func (v *BeaconState) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) common.Ro
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), spec.Wrap(&v.HistoricalRoots), &v.RewardAdjustmentFactor,
 		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.PreviousEpochReserve, &v.CurrentEpochReserve,
-		spec.Wrap(&v.RandaoMixes), spec.Wrap(&v.Slashings),
+		spec.Wrap(&v.RandaoMixes), 
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
 		&v.JustificationBits,
 		&v.PreviousJustifiedCheckpoint, &v.CurrentJustifiedCheckpoint,
@@ -163,7 +162,6 @@ const (
 	_statePreviousEpochReserve
 	_stateCurrentEpochReserve
 	_stateRandaoMixes
-	_stateSlashings
 	_statePreviousEpochParticipation
 	_stateCurrentEpochParticipation
 	_stateJustificationBits
@@ -205,8 +203,6 @@ func BeaconStateType(spec *common.Spec) *ContainerTypeDef {
 		{"current_epoch_reserve", Uint64Type},
 		// Randomness
 		{"randao_mixes", phase0.RandaoMixesType(spec)},
-		// Slashings
-		{"slashings", phase0.SlashingsType(spec)},
 		// Participation
 		{"previous_epoch_participation", altair.ParticipationRegistryType(spec)},
 		{"current_epoch_participation", altair.ParticipationRegistryType(spec)},
@@ -453,10 +449,6 @@ func (state *BeaconStateView) SeedRandao(spec *common.Spec, seed common.Root) er
 	return state.Set(_stateRandaoMixes, v)
 }
 
-func (state *BeaconStateView) Slashings() (common.Slashings, error) {
-	return phase0.AsSlashings(state.Get(_stateSlashings))
-}
-
 func (state *BeaconStateView) PreviousEpochParticipation() (*altair.ParticipationRegistryView, error) {
 	return altair.AsParticipationRegistry(state.Get(_statePreviousEpochParticipation))
 }
@@ -610,7 +602,6 @@ func (state *BeaconStateView) HistoricalSummaries() (HistoricalSummariesList, er
 func (state *BeaconStateView) ForkSettings(spec *common.Spec) *common.ForkSettings {
 	return &common.ForkSettings{
 		MinSlashingPenaltyQuotient:     uint64(spec.MIN_SLASHING_PENALTY_QUOTIENT_BELLATRIX),
-		ProportionalSlashingMultiplier: uint64(spec.PROPORTIONAL_SLASHING_MULTIPLIER_BELLATRIX),
 		InactivityPenaltyQuotient:      uint64(spec.INACTIVITY_PENALTY_QUOTIENT_BELLATRIX),
 		CalcProposerShare: func(whistleblowerReward common.Gwei) common.Gwei {
 			return whistleblowerReward * altair.PROPOSER_WEIGHT / altair.WEIGHT_DENOMINATOR
