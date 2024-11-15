@@ -1,4 +1,4 @@
-package deneb
+package electra
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"github.com/protolambda/zrnt/eth2/beacon/altair"
 	"github.com/protolambda/zrnt/eth2/beacon/capella"
 	"github.com/protolambda/zrnt/eth2/beacon/common"
+	"github.com/protolambda/zrnt/eth2/beacon/deneb"
 	"github.com/protolambda/zrnt/eth2/beacon/phase0"
 )
 
@@ -39,7 +40,7 @@ func (state *BeaconStateView) ProcessEpoch(ctx context.Context, spec *common.Spe
 		return err
 	}
 	// Modified in Deneb
-	if err := ProcessEpochRegistryUpdates(ctx, spec, epc, flats, state); err != nil {
+	if err := deneb.ProcessEpochRegistryUpdates(ctx, spec, epc, flats, state); err != nil {
 		return err
 	}
 	if err := phase0.ProcessEffectiveBalanceUpdates(ctx, spec, epc, flats, state); err != nil {
@@ -58,7 +59,7 @@ func (state *BeaconStateView) ProcessEpoch(ctx context.Context, spec *common.Spe
 }
 
 func (state *BeaconStateView) ProcessBlock(ctx context.Context, spec *common.Spec, epc *common.EpochsContext, benv *common.BeaconBlockEnvelope) error {
-	body, ok := benv.Body.(*BeaconBlockBody)
+	body, ok := benv.Body.(*deneb.BeaconBlockBody)
 	if !ok {
 		return fmt.Errorf("unexpected block type %T in Bellatrix ProcessBlock", benv.Body)
 	}
@@ -73,11 +74,11 @@ func (state *BeaconStateView) ProcessBlock(ctx context.Context, spec *common.Spe
 		return err
 	}
 	// Modified in Deneb
-	eng, ok := spec.ExecutionEngine.(ExecutionEngine)
+	eng, ok := spec.ExecutionEngine.(deneb.ExecutionEngine)
 	if !ok {
 		return fmt.Errorf("provided execution-engine interface does not support Deneb: %T", spec.ExecutionEngine)
 	}
-	if err := ProcessExecutionPayload(ctx, spec, state, body, eng); err != nil {
+	if err := deneb.ProcessExecutionPayload(ctx, spec, state, body, eng); err != nil {
 		return err
 	}
 	if err := phase0.ProcessRandaoReveal(ctx, spec, epc, state, body.RandaoReveal); err != nil {
@@ -95,11 +96,11 @@ func (state *BeaconStateView) ProcessBlock(ctx context.Context, spec *common.Spe
 		return err
 	}
 	// Modified in Deneb
-	if err := ProcessAttestations(ctx, spec, epc, state, body.Attestations); err != nil {
+	if err := deneb.ProcessAttestations(ctx, spec, epc, state, body.Attestations); err != nil {
 		return err
 	}
 	// Modified in Deneb
-	if err := ProcessVoluntaryExits(ctx, spec, epc, state, body.VoluntaryExits); err != nil {
+	if err := deneb.ProcessVoluntaryExits(ctx, spec, epc, state, body.VoluntaryExits); err != nil {
 		return err
 	}
 	return nil
