@@ -280,8 +280,7 @@ func (state *BeaconStateView) AddValidator(spec *common.Spec, pub common.BLSPubk
 		ActivationEligibilityEpoch: common.FAR_FUTURE_EPOCH,
 		ActivationEpoch:            common.FAR_FUTURE_EPOCH,
 		ExitEpoch:                  common.FAR_FUTURE_EPOCH,
-		//WithdrawableEpoch:          common.FAR_FUTURE_EPOCH,
-		EffectiveBalance: effBalance,
+		EffectiveBalance:           effBalance,
 	}
 	validators, err := phase0.AsValidatorsRegistry(state.Get(_stateValidators))
 	if err != nil {
