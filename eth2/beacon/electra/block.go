@@ -117,7 +117,7 @@ type BeaconBlockBody struct {
 	Graffiti     common.Root         `json:"graffiti" yaml:"graffiti"`
 
 	ProposerSlashings phase0.ProposerSlashings `json:"proposer_slashings" yaml:"proposer_slashings"`
-	AttesterSlashings phase0.AttesterSlashings `json:"attester_slashings" yaml:"attester_slashings"`
+	AttesterSlashings AttesterSlashingsElectra `json:"attester_slashings" yaml:"attester_slashings"`
 	Attestations      phase0.Attestations      `json:"attestations" yaml:"attestations"`
 	VoluntaryExits    phase0.VoluntaryExits    `json:"voluntary_exits" yaml:"voluntary_exits"`
 
@@ -247,6 +247,7 @@ func BeaconBlockBodyType(spec *common.Spec) *ContainerTypeDef {
 		{"execution_payload", deneb.ExecutionPayloadType(spec)},
 		// Deneb
 		{"blob_kzg_commitments", deneb.KZGCommitmentsType(spec)},
+		// Electra
 		{"execution_requests", ExecutionRequestsType(spec)},
 	})
 }
@@ -256,7 +257,7 @@ type BeaconBlockBodyShallow struct {
 	Graffiti     common.Root         `json:"graffiti" yaml:"graffiti"`
 
 	ProposerSlashings phase0.ProposerSlashings `json:"proposer_slashings" yaml:"proposer_slashings"`
-	AttesterSlashings phase0.AttesterSlashings `json:"attester_slashings" yaml:"attester_slashings"`
+	AttesterSlashings AttesterSlashingsElectra `json:"attester_slashings" yaml:"attester_slashings"`
 	Attestations      phase0.Attestations      `json:"attestations" yaml:"attestations"`
 	VoluntaryExits    phase0.VoluntaryExits    `json:"voluntary_exits" yaml:"voluntary_exits"`
 

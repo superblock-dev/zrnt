@@ -39,3 +39,7 @@ func (p CommitteeIndices) HashTreeRoot(spec *Spec, hFn tree.HashFn) Root {
 func (c *Phase0Preset) CommitteeIndices() ListTypeDef {
 	return ListType(ValidatorIndexType, uint64(c.MAX_VALIDATORS_PER_COMMITTEE))
 }
+
+func (c *ElectraPreset) CommitteeIndicesElectra() ListTypeDef {
+	return ListType(ValidatorIndexType, uint64(c.MAX_VALIDATORS_PER_COMMITTEE_ELECTRA))
+}
