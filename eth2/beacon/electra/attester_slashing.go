@@ -50,11 +50,11 @@ func (a *AttesterSlashingElectra) HashTreeRoot(spec *common.Spec, hFn tree.HashF
 	return hFn.HashTreeRoot(spec.Wrap(&a.Attestation1), spec.Wrap(&a.Attestation2))
 }
 
-func BlockAttesterSlashingsType(spec *common.Spec) ListTypeDef {
-	return ListType(AttesterSlashingType(spec), uint64(spec.MAX_ATTESTER_SLASHINGS))
+func BlockAttesterSlashingsElectraType(spec *common.Spec) ListTypeDef {
+	return ListType(AttesterSlashingElectraType(spec), uint64(spec.MAX_ATTESTER_SLASHINGS))
 }
 
-func AttesterSlashingType(spec *common.Spec) *ContainerTypeDef {
+func AttesterSlashingElectraType(spec *common.Spec) *ContainerTypeDef {
 	return ContainerType("AttesterSlashingElectra", []FieldDef{
 		{"attestation_1", IndexedAttestationElectraType(spec)},
 		{"attestation_2", IndexedAttestationElectraType(spec)},

@@ -240,7 +240,7 @@ func BeaconBlockBodyType(spec *common.Spec) *ContainerTypeDef {
 		{"graffiti", common.Bytes32Type}, // Arbitrary data
 		// Operations
 		{"proposer_slashings", phase0.BlockProposerSlashingsType(spec)},
-		{"attester_slashings", phase0.BlockAttesterSlashingsType(spec)},
+		{"attester_slashings", BlockAttesterSlashingsElectraType(spec)},
 		{"attestations", phase0.BlockAttestationsType(spec)},
 		{"voluntary_exits", phase0.BlockVoluntaryExitsType(spec)},
 		// Capella
