@@ -75,12 +75,12 @@ func (r *DepositRequest) Serialize(spec *common.Spec, w *codec.EncodingWriter) e
 	return w.Container(&r.Pubkey, &r.WithdrawalCredentials, &r.Amount, &r.Signature, &r.Index)
 }
 
-func (*DepositRequest) ByteLength(spec *common.Spec) uint64 {
-	return DepositRequestType.TypeByteLength()
+func (r *DepositRequest) ByteLength(spec *common.Spec) uint64 {
+	return codec.ContainerLength(&r.Pubkey, &r.WithdrawalCredentials, &r.Amount, &r.Signature, &r.Index)
 }
 
-func (*DepositRequest) FixedLength(spec *common.Spec) uint64 {
-	return DepositRequestType.TypeByteLength()
+func (r *DepositRequest) FixedLength(spec *common.Spec) uint64 {
+	return 0
 }
 
 func (r *DepositRequest) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) common.Root {
@@ -191,8 +191,8 @@ func (li DepositRequests) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) commo
 	}, length, uint64(spec.MAX_DEPOSIT_REQUESTS_PER_PAYLOAD))
 }
 
-func DepositRequestsType(spec *common.Spec) *ComplexListTypeDef {
-	return ComplexListType(DepositRequestType, uint64(spec.MAX_DEPOSIT_REQUESTS_PER_PAYLOAD))
+func DepositRequestsType(spec *common.Spec) ListTypeDef {
+	return ListType(DepositRequestType, uint64(spec.MAX_DEPOSIT_REQUESTS_PER_PAYLOAD))
 }
 
 type DepositRequestsView struct{ *ComplexListView }
@@ -221,12 +221,12 @@ func (r *WithdrawalRequest) Serialize(spec *common.Spec, w *codec.EncodingWriter
 	return w.Container(&r.SourceAddress, &r.Pubkey, &r.Amount)
 }
 
-func (*WithdrawalRequest) ByteLength(spec *common.Spec) uint64 {
-	return WithdrawalRequestType.TypeByteLength()
+func (r *WithdrawalRequest) ByteLength(spec *common.Spec) uint64 {
+	return codec.ContainerLength(&r.SourceAddress, &r.Pubkey, &r.Amount)
 }
 
-func (*WithdrawalRequest) FixedLength(spec *common.Spec) uint64 {
-	return WithdrawalRequestType.TypeByteLength()
+func (r *WithdrawalRequest) FixedLength(spec *common.Spec) uint64 {
+	return 0
 }
 
 func (r *WithdrawalRequest) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) common.Root {
@@ -315,8 +315,8 @@ func (li WithdrawalRequests) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) co
 	}, length, uint64(spec.MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD))
 }
 
-func WithdrawalRequestsType(spec *common.Spec) *ComplexListTypeDef {
-	return ComplexListType(WithdrawalRequestType, uint64(spec.MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD))
+func WithdrawalRequestsType(spec *common.Spec) ListTypeDef {
+	return ListType(WithdrawalRequestType, uint64(spec.MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD))
 }
 
 type WithdrawalRequestsView struct{ *ComplexListView }
