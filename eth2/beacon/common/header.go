@@ -124,6 +124,11 @@ func (v *BeaconBlockHeaderView) BodyRoot() (Root, error) {
 	return AsRoot(v.Get(4))
 }
 
+func (v *BeaconBlockHeaderView) SetBodyRoot(root Root) error {
+	rv := RootView(root)
+	return v.Set(4, &rv)
+}
+
 func (v *BeaconBlockHeaderView) Raw() (*BeaconBlockHeader, error) {
 	slot, err := v.Slot()
 	if err != nil {
