@@ -208,9 +208,9 @@ func (d *DepositRequestsView) Append(deposit DepositRequest) error {
 }
 
 type WithdrawalRequest struct {
-	SourceAddress common.Root      `json:"source_address" yaml:"source_address"`
-	Pubkey        common.BLSPubkey `json:"pubkey" yaml:"pubkey"`
-	Amount        common.Gwei      `json:"amount" yaml:"amount"`
+	SourceAddress common.Eth1Address `json:"source_address" yaml:"source_address"`
+	Pubkey        common.BLSPubkey   `json:"pubkey" yaml:"pubkey"`
+	Amount        common.Gwei        `json:"amount" yaml:"amount"`
 }
 
 func (r *WithdrawalRequest) Deserialize(spec *common.Spec, dr *codec.DecodingReader) error {
@@ -234,9 +234,8 @@ func (r *WithdrawalRequest) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) com
 }
 
 func (r *WithdrawalRequest) View() *WithdrawalRequestView {
-	sAddr := RootView(r.SourceAddress)
 	c, _ := DepositRequestType.FromFields(
-		&sAddr,
+		r.SourceAddress.View(),
 		common.ViewPubkey(&r.Pubkey),
 		Uint64View(r.Amount),
 	)
@@ -244,7 +243,7 @@ func (r *WithdrawalRequest) View() *WithdrawalRequestView {
 }
 
 var WithdrawalRequestType = ContainerType("WithdrawalRequest", []FieldDef{
-	{"source_address", common.Bytes32Type},
+	{"source_address", common.Eth1AddressType},
 	{"pubkey", common.BLSPubkeyType},
 	{"amount", common.GweiType},
 })
