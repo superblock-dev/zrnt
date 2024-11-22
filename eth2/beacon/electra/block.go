@@ -258,7 +258,7 @@ func BeaconBlockBodyType(spec *common.Spec) *ContainerTypeDef {
 		// Operations
 		{"proposer_slashings", phase0.BlockProposerSlashingsType(spec)},
 		{"attester_slashings", BlockAttesterSlashingsElectraType(spec)},
-		{"attestations", phase0.BlockAttestationsType(spec)},
+		{"attestations", BlockAttestationsElectraType(spec)},
 		{"deposits", phase0.BlockDepositsType(spec)},
 		{"voluntary_exits", phase0.BlockVoluntaryExitsType(spec)},
 		// Capella
