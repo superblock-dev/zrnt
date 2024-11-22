@@ -234,7 +234,7 @@ func (r *WithdrawalRequest) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) com
 }
 
 func (r *WithdrawalRequest) View() *WithdrawalRequestView {
-	c, _ := DepositRequestType.FromFields(
+	c, _ := WithdrawalRequestType.FromFields(
 		r.SourceAddress.View(),
 		common.ViewPubkey(&r.Pubkey),
 		Uint64View(r.Amount),
