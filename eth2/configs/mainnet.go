@@ -72,6 +72,9 @@ var Mainnet = &common.Spec{
 		MAX_DEPOSIT_REQUESTS_PER_PAYLOAD:     8192,
 		MAX_WITHDRAWAL_REQUESTS_PER_PAYLOAD:  16,
 		MAX_VALIDATORS_PER_COMMITTEE_ELECTRA: 131072,
+		MAX_ATTESTATIONS_ALPACA:              8,
+		MAX_ATTESTING_INDICES:                131072,
+		COMMITTEE_BITS:                       8,
 	},
 	Config: common.Config{
 		PRESET_BASE:                           "mainnet",
