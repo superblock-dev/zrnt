@@ -25,6 +25,10 @@ type BeaconState struct {
 	BlockRoots             phase0.HistoricalBatchRoots `json:"block_roots" yaml:"block_roots"`
 	StateRoots             phase0.HistoricalBatchRoots `json:"state_roots" yaml:"state_roots"`
 	RewardAdjustmentFactor common.Number               `json:"reward_adjustment_factor" yaml:"reward_adjustment_factor"`
+	// Eth1
+	Eth1Data         common.Eth1Data      `json:"eth1_data" yaml:"eth1_data"`
+	Eth1DataVotes    phase0.Eth1DataVotes `json:"eth1_data_votes" yaml:"eth1_data_votes"`
+	Eth1DepositIndex common.DepositIndex  `json:"eth1_deposit_index" yaml:"eth1_deposit_index"`
 	// Registry
 	Validators  phase0.ValidatorRegistry `json:"validators" yaml:"validators"`
 	Balances    phase0.Balances          `json:"balances" yaml:"balances"`
@@ -48,6 +52,7 @@ type BeaconState struct {
 	// Deep history valid from Capella onwards
 	HistoricalSummaries capella.HistoricalSummaries `json:"historical_summaries"`
 	// Deposit & withdrawals
+	DepositRequestsStartIndex common.Number             `json:"deposit_requests_start_index" yaml:"deposit_requests_start_index"`
 	DepositBalanceToConsume   common.Gwei               `json:"deposit_balance_to_consume" yaml:"deposit_balance_to_consume"`
 	ExitBalanceToConsume      common.Gwei               `json:"exit_balance_to_consume" yaml:"exit_balance_to_consume"`
 	EarliestExitEpoch         common.Epoch              `json:"earliest_exit_epoch" yaml:"earliest_exit_epoch"`
@@ -59,6 +64,7 @@ func (v *BeaconState) Deserialize(spec *common.Spec, dr *codec.DecodingReader) e
 	return dr.Container(&v.GenesisTime, &v.GenesisValidatorsRoot,
 		&v.Slot, &v.Fork, &v.LatestBlockHeader,
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), &v.RewardAdjustmentFactor,
+		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.Reserves,
 		spec.Wrap(&v.RandaoMixes),
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
@@ -69,6 +75,7 @@ func (v *BeaconState) Deserialize(spec *common.Spec, dr *codec.DecodingReader) e
 		&v.LatestExecutionPayloadHeader,
 		&v.NextWithdrawalIndex, &v.NextWithdrawalValidatorIndex,
 		spec.Wrap(&v.HistoricalSummaries),
+		&v.DepositRequestsStartIndex,
 		&v.DepositBalanceToConsume, &v.ExitBalanceToConsume,
 		&v.EarliestExitEpoch,
 		spec.Wrap(&v.PendingDeposits), spec.Wrap(&v.PendingPartialWithdrawals),
@@ -79,6 +86,7 @@ func (v *BeaconState) Serialize(spec *common.Spec, w *codec.EncodingWriter) erro
 	return w.Container(&v.GenesisTime, &v.GenesisValidatorsRoot,
 		&v.Slot, &v.Fork, &v.LatestBlockHeader,
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), &v.RewardAdjustmentFactor,
+		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.Reserves,
 		spec.Wrap(&v.RandaoMixes),
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
@@ -89,6 +97,7 @@ func (v *BeaconState) Serialize(spec *common.Spec, w *codec.EncodingWriter) erro
 		&v.LatestExecutionPayloadHeader,
 		&v.NextWithdrawalIndex, &v.NextWithdrawalValidatorIndex,
 		spec.Wrap(&v.HistoricalSummaries),
+		&v.DepositRequestsStartIndex,
 		&v.DepositBalanceToConsume, &v.ExitBalanceToConsume,
 		&v.EarliestExitEpoch,
 		spec.Wrap(&v.PendingDeposits), spec.Wrap(&v.PendingPartialWithdrawals),
@@ -99,6 +108,7 @@ func (v *BeaconState) ByteLength(spec *common.Spec) uint64 {
 	return codec.ContainerLength(&v.GenesisTime, &v.GenesisValidatorsRoot,
 		&v.Slot, &v.Fork, &v.LatestBlockHeader,
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), &v.RewardAdjustmentFactor,
+		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.Reserves,
 		spec.Wrap(&v.RandaoMixes),
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
@@ -109,6 +119,7 @@ func (v *BeaconState) ByteLength(spec *common.Spec) uint64 {
 		&v.LatestExecutionPayloadHeader,
 		&v.NextWithdrawalIndex, &v.NextWithdrawalValidatorIndex,
 		spec.Wrap(&v.HistoricalSummaries),
+		&v.DepositRequestsStartIndex,
 		&v.DepositBalanceToConsume, &v.ExitBalanceToConsume,
 		&v.EarliestExitEpoch,
 		spec.Wrap(&v.PendingDeposits), spec.Wrap(&v.PendingPartialWithdrawals),
@@ -123,6 +134,7 @@ func (v *BeaconState) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) common.Ro
 	return hFn.HashTreeRoot(&v.GenesisTime, &v.GenesisValidatorsRoot,
 		&v.Slot, &v.Fork, &v.LatestBlockHeader,
 		spec.Wrap(&v.BlockRoots), spec.Wrap(&v.StateRoots), &v.RewardAdjustmentFactor,
+		&v.Eth1Data, spec.Wrap(&v.Eth1DataVotes), &v.Eth1DepositIndex,
 		spec.Wrap(&v.Validators), spec.Wrap(&v.Balances), &v.Reserves,
 		spec.Wrap(&v.RandaoMixes),
 		spec.Wrap(&v.PreviousEpochParticipation), spec.Wrap(&v.CurrentEpochParticipation),
@@ -133,6 +145,7 @@ func (v *BeaconState) HashTreeRoot(spec *common.Spec, hFn tree.HashFn) common.Ro
 		&v.LatestExecutionPayloadHeader,
 		&v.NextWithdrawalIndex, &v.NextWithdrawalValidatorIndex,
 		spec.Wrap(&v.HistoricalSummaries),
+		&v.DepositRequestsStartIndex,
 		&v.DepositBalanceToConsume, &v.ExitBalanceToConsume,
 		&v.EarliestExitEpoch,
 		spec.Wrap(&v.PendingDeposits), spec.Wrap(&v.PendingPartialWithdrawals),
@@ -150,6 +163,9 @@ const (
 	_stateBlockRoots
 	_stateStateRoots
 	_stateRewardAdjustmentFactor
+	_stateEth1Data
+	_stateEth1DataVotes
+	_stateEth1DepositIndex
 	_stateValidators
 	_stateBalances
 	_stateReserves
@@ -165,6 +181,7 @@ const (
 	_nextWithdrawalIndex
 	_nextWithdrawalValidatorIndex
 	_historicalSummaries
+	_DepositRequestsStartIndex
 	_depositBalanceToConsume
 	_exitBalanceToConsume
 	_earliestExitEpoch
@@ -185,6 +202,10 @@ func BeaconStateType(spec *common.Spec) *ContainerTypeDef {
 		{"state_roots", phase0.BatchRootsType(spec)},
 		// Tokenomics
 		{"reward_adjustment_factor", Uint64Type},
+		// Eth1
+		{"eth1_data", common.Eth1DataType},
+		{"eth1_data_votes", phase0.Eth1DataVotesType(spec)},
+		{"eth1_deposit_index", Uint64Type},
 		// Registry
 		{"validators", phase0.ValidatorsRegistryType(spec)},
 		{"balances", phase0.RegistryBalancesType(spec)},
@@ -209,6 +230,7 @@ func BeaconStateType(spec *common.Spec) *ContainerTypeDef {
 		// Deep history valid from Capella onwards
 		{"historical_summaries", capella.HistoricalSummariesType(spec)},
 		// Deposit & withdrawals
+		{"deposit_requests_start_index", common.NumberType},
 		{"deposit_balance_to_consume", common.GweiType},
 		{"exit_balance_to_consume", common.GweiType},
 		{"earliest_exit_epoch", common.EpochType},
@@ -298,6 +320,30 @@ func (state *BeaconStateView) RewardAdjustmentFactor() (common.Number, error) {
 
 func (state *BeaconStateView) SetRewardAdjustmentFactor(v common.Number) error {
 	return state.Set(_stateRewardAdjustmentFactor, Uint64View(v))
+}
+
+func (state *BeaconStateView) Eth1Data() (common.Eth1Data, error) {
+	dat, err := common.AsEth1Data(state.Get(_stateEth1Data))
+	if err != nil {
+		return common.Eth1Data{}, err
+	}
+	return dat.Raw()
+}
+func (state *BeaconStateView) SetEth1Data(v common.Eth1Data) error {
+	return state.Set(_stateEth1Data, v.View())
+}
+func (state *BeaconStateView) Eth1DataVotes() (common.Eth1DataVotes, error) {
+	return phase0.AsEth1DataVotes(state.Get(_stateEth1DataVotes))
+}
+func (state *BeaconStateView) Eth1DepositIndex() (common.DepositIndex, error) {
+	return common.AsDepositIndex(state.Get(_stateEth1DepositIndex))
+}
+func (state *BeaconStateView) IncrementDepositIndex() error {
+	depIndex, err := state.Eth1DepositIndex()
+	if err != nil {
+		return err
+	}
+	return state.Set(_stateEth1DepositIndex, Uint64View(depIndex+1))
 }
 
 func (state *BeaconStateView) Validators() (common.ValidatorRegistry, error) {
@@ -513,6 +559,14 @@ func (state *BeaconStateView) DepositBalanceToConsume() (common.Gwei, error) {
 
 func (state *BeaconStateView) SetDepositBalanceToConsume(v common.Gwei) error {
 	return state.Set(_depositBalanceToConsume, Uint64View(v))
+}
+
+func (state *BeaconStateView) DepositRequestsStartIndex() (common.Number, error) {
+	return common.AsNumber(state.Get(_DepositRequestsStartIndex))
+}
+
+func (state *BeaconStateView) SetDepositRequestsStartIndex(v common.Number) error {
+	return state.Set(_DepositRequestsStartIndex, Uint64View(v))
 }
 
 func (state *BeaconStateView) ExitBalanceToConsume() (common.Gwei, error) {

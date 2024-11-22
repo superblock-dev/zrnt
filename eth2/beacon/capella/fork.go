@@ -43,6 +43,18 @@ func UpgradeToCapella(spec *common.Spec, epc *common.EpochsContext, pre *bellatr
 	if err != nil {
 		return nil, err
 	}
+	eth1Data, err := pre.Eth1Data()
+	if err != nil {
+		return nil, err
+	}
+	eth1DataVotes, err := pre.Eth1DataVotes()
+	if err != nil {
+		return nil, err
+	}
+	eth1DepositIndex, err := pre.Eth1DepositIndex()
+	if err != nil {
+		return nil, err
+	}
 	validators, err := pre.Validators()
 	if err != nil {
 		return nil, err
@@ -119,6 +131,9 @@ func UpgradeToCapella(spec *common.Spec, epc *common.EpochsContext, pre *bellatr
 		latestBlockHeader.View(),
 		blockRoots.(view.View),
 		stateRoots.(view.View),
+		eth1Data.View(),
+		eth1DataVotes.(view.View),
+		(*view.Uint64View)(&eth1DepositIndex),
 		validators.(view.View),
 		balances.(view.View),
 		randaoMixes.(view.View),

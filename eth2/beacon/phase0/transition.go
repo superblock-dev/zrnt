@@ -35,6 +35,9 @@ func (state *BeaconStateView) ProcessEpoch(ctx context.Context, spec *common.Spe
 	if err := ProcessEpochRegistryUpdates(ctx, spec, epc, flats, state); err != nil {
 		return err
 	}
+	if err := ProcessEth1DataReset(ctx, spec, epc, state); err != nil {
+		return err
+	}
 	if err := ProcessEffectiveBalanceUpdates(ctx, spec, epc, flats, state); err != nil {
 		return err
 	}
@@ -66,6 +69,9 @@ func (state *BeaconStateView) ProcessBlock(ctx context.Context, spec *common.Spe
 	if err := ProcessRandaoReveal(ctx, spec, epc, state, body.RandaoReveal); err != nil {
 		return err
 	}
+	if err := ProcessEth1Vote(ctx, spec, epc, state, body.Eth1Data); err != nil {
+		return err
+	}
 	// Safety checks, in case the user of the function provided too many operations
 	if err := body.CheckLimits(spec); err != nil {
 		return err
@@ -78,6 +84,9 @@ func (state *BeaconStateView) ProcessBlock(ctx context.Context, spec *common.Spe
 		return err
 	}
 	if err := ProcessAttestations(ctx, spec, epc, state, body.Attestations); err != nil {
+		return err
+	}
+	if err := ProcessDeposits(ctx, spec, epc, state, body.Deposits); err != nil {
 		return err
 	}
 	if err := ProcessVoluntaryExits(ctx, spec, epc, state, body.VoluntaryExits); err != nil {
