@@ -164,9 +164,9 @@ type Config struct {
 	DENEB_FORK_VERSION Version `yaml:"DENEB_FORK_VERSION" json:"DENEB_FORK_VERSION"`
 	DENEB_FORK_EPOCH   Epoch   `yaml:"DENEB_FORK_EPOCH" json:"DENEB_FORK_EPOCH"`
 
-	// Electra
-	ELECTRA_FORK_VERSION Version `yaml:"ELECTRA_FORK_VERSION" json:"ELECTRA_FORK_VERSION"`
-	ELECTRA_FORK_EPOCH   Epoch   `yaml:"ELECTRA_FORK_EPOCH" json:"ELECTRA_FORK_EPOCH"`
+	// Alpaca
+	ALPACA_FORK_VERSION Version `yaml:"ALPACA_FORK_VERSION" json:"ALPACA_FORK_VERSION"`
+	ALPACA_FORK_EPOCH   Epoch   `yaml:"ALPACA_FORK_EPOCH" json:"ALPACA_FORK_EPOCH"`
 
 	// EIP6110
 	EIP6110_FORK_VERSION Version `yaml:"EIP6110_FORK_VERSION" json:"EIP6110_FORK_VERSION"`
@@ -331,9 +331,9 @@ func (spec *Spec) ForkVersion(slot Slot) Version {
 		return spec.BELLATRIX_FORK_VERSION
 	} else if epoch < spec.DENEB_FORK_EPOCH {
 		return spec.CAPELLA_FORK_VERSION
-	} else if epoch < spec.ELECTRA_FORK_EPOCH {
+	} else if epoch < spec.ALPACA_FORK_EPOCH {
 		return spec.DENEB_FORK_VERSION
 	} else {
-		return spec.ELECTRA_FORK_VERSION
+		return spec.ALPACA_FORK_VERSION
 	}
 }
