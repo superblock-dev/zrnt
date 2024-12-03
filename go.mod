@@ -18,6 +18,6 @@ require (
 )
 
 replace (
-	github.com/ethereum/go-ethereum => github.com/overprotocol/kairos v0.0.0-20241111042701-5e1670fa4c17
+	github.com/ethereum/go-ethereum => github.com/overprotocol/kairos v0.0.0-20241203013716-9ae7ad43fde6
 	github.com/protolambda/zrnt => github.com/superblock-dev/zrnt v0.0.0-20240208044402-a0e6af5cc000
 )
